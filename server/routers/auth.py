@@ -19,7 +19,7 @@ def _templates(request: Request):
 def login_form(request: Request):
     if security.current_user(request) is not None:
         return RedirectResponse(url="/dashboard", status_code=303)
-    return _templates(request).TemplateResponse(
+    return _templates(request).TemplateResponse(request,
         name="login.html", context={"request": request, "error": None})
 
 
@@ -32,7 +32,7 @@ def login_submit(
     try:
         user = security.authenticate(username, password)
     except security.LoginError as exc:
-        return _templates(request).TemplateResponse(
+        return _templates(request).TemplateResponse(request,
             name="login.html",
             context={"request": request, "error": exc.code, "username": username},
             status_code=401,
@@ -58,7 +58,7 @@ def logout(request: Request):
 @router.get("/change-password", response_class=HTMLResponse)
 def change_password_form(request: Request):
     user = security.require_user(request)
-    return _templates(request).TemplateResponse(
+    return _templates(request).TemplateResponse(request,
         name="change_password.html",
         context={"request": request, "user": user, "error": None})
 
@@ -88,7 +88,7 @@ def change_password_submit(
                 current, row["password_hash"], row["password_salt"]):
             error = "wrong_current"
     if error:
-        return _templates(request).TemplateResponse(
+        return _templates(request).TemplateResponse(request,
             name="change_password.html",
             context={"request": request, "user": user, "error": error},
             status_code=400,

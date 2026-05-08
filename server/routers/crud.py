@@ -76,7 +76,7 @@ def crud_list(request: Request, view_id: str):
     cfg = _cfg(view_id)
     sql = cfg['list_sql'] + " " + cfg.get('list_order', '')
     rows = fetch_all(sql)
-    return _tpl(request).TemplateResponse(name="crud_list.html", context={
+    return _tpl(request).TemplateResponse(request, name="crud_list.html", context={
         "request": request,
         "user": user,
         "active": view_id,
@@ -95,7 +95,7 @@ def crud_new_form(request: Request, view_id: str):
     user = security.require_user(request)
     cfg = _cfg(view_id)
     fields = _prepare_fields(cfg, row=None)
-    return _tpl(request).TemplateResponse(name="crud_form.html", context={
+    return _tpl(request).TemplateResponse(request, name="crud_form.html", context={
         "request": request,
         "user": user,
         "active": view_id,
@@ -135,7 +135,7 @@ async def crud_new_submit(request: Request, view_id: str):
         execute(sql, params)
     except Exception as exc:
         fields = _prepare_fields(cfg, row=None, form_data=form)
-        return _tpl(request).TemplateResponse(name="crud_form.html", context={
+        return _tpl(request).TemplateResponse(request, name="crud_form.html", context={
             "request": request,
             "user": user,
             "active": view_id,
@@ -164,7 +164,7 @@ def crud_edit_form(request: Request, view_id: str, pk_val: int):
         raise HTTPException(status_code=404, detail="Record not found")
 
     fields = _prepare_fields(cfg, row=row)
-    return _tpl(request).TemplateResponse(name="crud_form.html", context={
+    return _tpl(request).TemplateResponse(request, name="crud_form.html", context={
         "request": request,
         "user": user,
         "active": view_id,
@@ -197,7 +197,7 @@ async def crud_edit_submit(request: Request, view_id: str, pk_val: int):
         execute(sql, params)
     except Exception as exc:
         fields = _prepare_fields(cfg, row=None, form_data=form)
-        return _tpl(request).TemplateResponse(name="crud_form.html", context={
+        return _tpl(request).TemplateResponse(request, name="crud_form.html", context={
             "request": request,
             "user": user,
             "active": view_id,
