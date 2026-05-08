@@ -9,13 +9,29 @@
 </head>
 <body>
   {% if user %}
-    <aside class="sidebar">
+    <!-- Mobile top bar -->
+    <div class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-brand">
+        <div class="logo-mark" style="width:28px;height:28px;font-size:10px;">RH</div>
+        <span class="brand-name">ResourceHub</span>
+      </div>
+      <a href="/logout" class="topbar-logout">↩</a>
+    </div>
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <div class="logo-mark">RH</div>
         <div>
           <div class="brand-name">ResourceHub</div>
           <div class="brand-tag">Plan. Track. Deliver.</div>
         </div>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button>
       </div>
 
       <nav class="nav">
@@ -51,9 +67,23 @@
         <a href="/logout" class="btn btn-ghost btn-block">Log out</a>
       </div>
     </aside>
+
     <main class="content">
       {% block content %}{% endblock %}
     </main>
+
+    <script>
+      const sidebar  = document.getElementById('sidebar');
+      const overlay  = document.getElementById('overlay');
+      const hamburger= document.getElementById('hamburger');
+      const closeBtn = document.getElementById('sidebarClose');
+      function openSidebar()  { sidebar.classList.add('open'); overlay.classList.add('show'); }
+      function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+      hamburger.addEventListener('click', openSidebar);
+      closeBtn.addEventListener('click', closeSidebar);
+      overlay.addEventListener('click', closeSidebar);
+    </script>
+
   {% else %}
     {% block fullpage %}{% endblock %}
   {% endif %}

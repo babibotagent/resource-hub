@@ -1,4 +1,4 @@
-/* ResourceHub – minimal modern stylesheet */
+/* ResourceHub – responsive stylesheet */
 :root {
   --primary:       #2563eb;
   --primary-dark:  #1e40af;
@@ -31,6 +31,68 @@ h2 { font-size: 15px; font-weight: 700; color: var(--text); }
 .small { font-size: 12px; }
 code { background: var(--background); padding: 1px 6px; border-radius: 4px; }
 
+/* ──────────────────────────────────────────────────── Mobile top bar (hidden on desktop) */
+.topbar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 52px;
+  background: var(--sidebar);
+  color: white;
+  align-items: center;
+  padding: 0 12px;
+  z-index: 200;
+  gap: 10px;
+}
+.topbar-brand {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.topbar-logout {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  font-size: 18px;
+  padding: 6px;
+}
+.hamburger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: white;
+  border-radius: 2px;
+}
+.sidebar-close {
+  display: none;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 18px;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 4px 8px;
+}
+
+/* ──────────────────────────────────────────────────── Sidebar overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 299;
+}
+.sidebar-overlay.show { display: block; }
+
 /* ──────────────────────────────────────────────────── Sidebar */
 .sidebar {
   width: 240px;
@@ -40,6 +102,7 @@ code { background: var(--background); padding: 1px 6px; border-radius: 4px; }
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  z-index: 300;
 }
 .sidebar-brand {
   display: flex;
@@ -56,6 +119,7 @@ code { background: var(--background); padding: 1px 6px; border-radius: 4px; }
   font-weight: 800; font-size: 14px;
   color: white;
   letter-spacing: 1px;
+  flex-shrink: 0;
 }
 .logo-mark.large { width: 64px; height: 64px; font-size: 22px; border-radius: 14px; }
 .brand-name { font-weight: 700; font-size: 15px; }
@@ -64,7 +128,7 @@ code { background: var(--background); padding: 1px 6px; border-radius: 4px; }
 .nav { flex: 1; padding: 12px 8px; overflow-y: auto; }
 .nav-link {
   display: block;
-  padding: 9px 14px;
+  padding: 10px 14px;
   margin: 2px 4px;
   color: rgba(255,255,255,0.85);
   text-decoration: none;
@@ -92,6 +156,7 @@ code { background: var(--background); padding: 1px 6px; border-radius: 4px; }
   min-width: 0;
 }
 .page-header { margin-bottom: 18px; }
+.page-header h1 { font-size: clamp(18px, 4vw, 22px); }
 
 /* ──────────────────────────────────────────────────── Cards & grids */
 .card {
@@ -238,3 +303,75 @@ code { background: var(--background); padding: 1px 6px; border-radius: 4px; }
 .btn-inline:hover { background: var(--background); }
 .btn-inline-danger { color: var(--danger); }
 .btn-inline-danger:hover { background: #fef2f2; }
+
+/* ──────────────────────────────────────────────────── Mobile responsive */
+@media (max-width: 768px) {
+
+  /* Show top bar, hide sidebar by default */
+  .topbar { display: flex; }
+  .sidebar-close { display: block; }
+
+  body { display: block; padding-top: 52px; }
+
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  /* Content takes full width */
+  .content {
+    padding: 16px 14px 60px;
+    width: 100%;
+  }
+
+  /* Page header stacks on small screens */
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .page-header > div { width: 100%; }
+  .page-header .btn { width: 100%; text-align: center; }
+
+  /* KPI grid: 2 columns on mobile */
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .kpi-value { font-size: 20px; }
+  .kpi-card  { padding: 12px 14px; }
+
+  /* Two-column grid becomes single */
+  .grid-2 { grid-template-columns: 1fr; gap: 12px; }
+
+  /* Tables: horizontal scroll */
+  .card { padding: 0; overflow-x: auto; }
+  .card > *:not(.table) { padding: 14px; }
+  .table th, .table td { padding: 7px 8px; white-space: nowrap; }
+
+  /* Forms: full width */
+  .form { gap: 10px; margin-top: 10px; }
+  .form input, .form select, .form textarea {
+    font-size: 16px; /* prevents iOS zoom */
+  }
+
+  /* Buttons */
+  .btn { padding: 10px 14px; font-size: 14px; }
+
+  /* Action buttons in table rows */
+  .btn-inline { padding: 5px 9px; font-size: 12px; }
+
+  /* Auth card */
+  .auth-card { padding: 24px 18px; }
+}
+
+@media (max-width: 400px) {
+  /* Single column KPIs on very small phones */
+  .kpi-grid { grid-template-columns: 1fr; }
+}
