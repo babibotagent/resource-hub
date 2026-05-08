@@ -52,7 +52,7 @@ app.add_middleware(
     session_cookie=SESSION_COOKIE_NAME,
     max_age=SESSION_MAX_AGE,
     same_site="lax",
-    https_only=not DEBUG,
+    https_only=False,  # TODO: set True after HTTPS is configured
 )
 
 # Static files (CSS, logo, etc.)
