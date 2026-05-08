@@ -1,0 +1,29 @@
+# Local development with Postgres (mirrors AWS RDS)
+# Usage: docker-compose up -d
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: resourcehub
+      POSTGRES_USER: resourcehub
+      POSTGRES_PASSWORD: localdev123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://resourcehub:localdev123@db:5432/resourcehub
+      SECRET_KEY: local-dev-key-not-for-production
+      DEBUG: "true"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}ResourceHub{% endblock %}</title>
+  <link rel="stylesheet" href="/static/app.css" />
+  <script src="https://unpkg.com/htmx.org@2.0.3" defer></script>
+</head>
+<body>
+  {% if user %}
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="logo-mark">RH</div>
+        <div>
+          <div class="brand-name">ResourceHub</div>
+          <div class="brand-tag">Plan. Track. Deliver.</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        {% set nav_items = [
+          ('dashboard',  'Dashboard',          ['admin','project_manager','member','viewer']),
+          ('projects',   'Projects',           ['admin','project_manager','member','viewer']),
+          ('tasks',      'Tasks',              ['admin','project_manager','member','viewer']),
+          ('assignments','Assignments',        ['admin','project_manager','member','viewer']),
+          ('timeentries','Time entries',       ['admin','project_manager','member','viewer']),
+          ('risks',      'Risks',              ['admin','project_manager','member','viewer']),
+          ('invoices',   'Invoices',           ['admin','project_manager']),
+          ('employees',  'Employees',          ['admin']),
+          ('externals',  'External resources', ['admin']),
+          ('customers',  'Customers',          ['admin']),
+          ('knowledge',  'Skills',             ['admin']),
+          ('departments','Departments',        ['admin']),
+          ('reports',    'Reports',            ['admin','project_manager']),
+          ('users',      'Users',              ['admin']),
+        ] %}
+        {% for vid, label, roles in nav_items %}
+          {% if user.role in roles %}
+            <a href="/{{ vid }}"
+               class="nav-link {{ 'active' if active == vid else '' }}">{{ label }}</a>
+          {% endif %}
+        {% endfor %}
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-name">{{ user.username }}</div>
+          <div class="user-role">{{ user.role }}</div>
+        </div>
+        <a href="/logout" class="btn btn-ghost btn-block">Log out</a>
+      </div>
+    </aside>
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+  {% else %}
+    {% block fullpage %}{% endblock %}
+  {% endif %}
+</body>
+</html>

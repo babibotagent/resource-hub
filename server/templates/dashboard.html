@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · ResourceHub{% endblock %}
+
+{% macro money(v) -%}
+  {%- if v is none -%}–{%- else -%}EUR {{ '%.0f'|format(v|float) }}{%- endif -%}
+{%- endmacro %}
+
+{% block content %}
+<header class="page-header">
+  <h1>Dashboard</h1>
+  <p class="muted">Overview of the portfolio</p>
+</header>
+
+<section class="kpi-grid">
+  <div class="kpi-card kpi-blue">
+    <div class="kpi-label">Projects</div>
+    <div class="kpi-value">{{ kpis.projects }}</div>
+    <div class="kpi-sub">{{ kpis.active_projects }} active</div>
+  </div>
+  <div class="kpi-card kpi-green">
+    <div class="kpi-label">Tasks</div>
+    <div class="kpi-value">{{ kpis.tasks }}</div>
+    <div class="kpi-sub">{{ kpis.open_tasks }} open</div>
+  </div>
+  <div class="kpi-card kpi-amber">
+    <div class="kpi-label">Outstanding revenue</div>
+    <div class="kpi-value">{{ money(kpis.outstanding_amount) }}</div>
+    <div class="kpi-sub">{{ kpis.invoices }} invoices total</div>
+  </div>
+  <div class="kpi-card kpi-purple">
+    <div class="kpi-label">Budget used</div>
+    <div class="kpi-value">{{ '%.1f'|format(kpis.budget_used_pct) }}%</div>
+    <div class="kpi-sub">{{ money(kpis.actual_cost) }} of {{ money(kpis.total_budget) }}</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Employees</div>
+    <div class="kpi-value">{{ kpis.employees }}</div>
+    <div class="kpi-sub">active</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">External resources</div>
+    <div class="kpi-value">{{ kpis.externals }}</div>
+    <div class="kpi-sub">active</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Customers</div>
+    <div class="kpi-value">{{ kpis.customers }}</div>
+    <div class="kpi-sub">active</div>
+  </div>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <h2>Projects by status</h2>
+    <table class="table">
+      <thead><tr><th>Status</th><th class="num">Count</th></tr></thead>
+      <tbody>
+        {% for r in by_status %}
+          <tr><td>{{ r.status }}</td><td class="num">{{ r.count }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Invoices by status</h2>
+    <table class="table">
+      <thead><tr><th>Status</th><th class="num">Count</th><th class="num">Amount</th></tr></thead>
+      <tbody>
+        {% for r in invoices_by_status %}
+          <tr>
+            <td>{{ r.status }}</td>
+            <td class="num">{{ r.count }}</td>
+            <td class="num">{{ money(r.amount) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <h2>Top projects by budget usage</h2>
+    <table class="table">
+      <thead><tr><th>Project</th><th>Customer</th><th class="num">Budget</th><th class="num">% spent</th></tr></thead>
+      <tbody>
+        {% for p in top_projects %}
+          <tr>
+            <td><strong>{{ p.project_code or '' }}</strong> {{ p.project_name }}</td>
+            <td>{{ p.customer_name or '–' }}</td>
+            <td class="num">{{ money(p.budget) }}</td>
+            <td class="num">{{ '%.1f'|format(p.pct_spent|float) }}%</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Recent risks</h2>
+    <table class="table">
+      <thead><tr><th>Project</th><th>Risk</th><th>Prob.</th><th>Impact</th></tr></thead>
+      <tbody>
+        {% for r in recent_risks %}
+          <tr>
+            <td>{{ r.project_code or '–' }}</td>
+            <td>{{ r.description }}</td>
+            <td>{{ r.probability }}</td>
+            <td>{{ r.impact }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

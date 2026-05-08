@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ResourceHub logo">
+  <title>ResourceHub</title>
+  <desc>Stacked Gantt bars on an indigo rounded square, symbolising project timelines.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#1e3a8a"/>
+      <stop offset="55%"  stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="bar1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"  stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="bar2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"  stop-color="#5eead4"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <linearGradient id="bar3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"  stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <filter id="soft" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+      <feOffset dx="0" dy="4" result="off"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Rounded-square backdrop -->
+  <rect x="16" y="16" width="480" height="480" rx="96" ry="96" fill="url(#bg)"/>
+
+  <!-- Subtle inner highlight -->
+  <rect x="32" y="32" width="448" height="448" rx="84" ry="84"
+        fill="none" stroke="white" stroke-opacity="0.12" stroke-width="2"/>
+
+  <!-- "Today" timeline indicator: dashed vertical line -->
+  <line x1="296" y1="120" x2="296" y2="392" stroke="#ffffff"
+        stroke-opacity="0.35" stroke-width="3" stroke-dasharray="6 8"/>
+
+  <!-- Gantt bar 1: planned (amber) -->
+  <g filter="url(#soft)">
+    <rect x="100" y="148" width="220" height="40" rx="20" fill="url(#bar1)"/>
+  </g>
+
+  <!-- Gantt bar 2: in progress (teal/cyan) -->
+  <g filter="url(#soft)">
+    <rect x="160" y="236" width="240" height="40" rx="20" fill="url(#bar2)"/>
+  </g>
+
+  <!-- Gantt bar 3: done (green) with checkmark -->
+  <g filter="url(#soft)">
+    <rect x="120" y="324" width="180" height="40" rx="20" fill="url(#bar3)"/>
+  </g>
+  <!-- Checkmark inside the green bar -->
+  <path d="M 254 344 l 12 12 l 24 -24"
+        stroke="white" stroke-width="6" stroke-linecap="round"
+        stroke-linejoin="round" fill="none"/>
+
+  <!-- Three small timeline dots above the bars -->
+  <circle cx="100" cy="120" r="6" fill="white" fill-opacity="0.9"/>
+  <circle cx="256" cy="120" r="6" fill="white" fill-opacity="0.6"/>
+  <circle cx="412" cy="120" r="6" fill="white" fill-opacity="0.35"/>
+</svg>

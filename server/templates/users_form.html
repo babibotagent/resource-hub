@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if row else 'New' }} user · ResourceHub{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <h1>{{ 'Edit' if row else 'New' }} user</h1>
+  <p class="muted"><a href="/users">&larr; Back to Users</a></p>
+</header>
+
+<div class="card" style="max-width:480px;">
+  {% if error %}
+    <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <form method="post"
+        action="{{ '/users/' ~ row.user_id ~ '/edit' if row else '/users/new' }}"
+        class="form">
+    <label>
+      <span>Username *</span>
+      <input type="text" name="username" required
+             value="{{ row.username if row else '' }}" />
+    </label>
+    <label>
+      <span>Password {{ '(leave blank to keep current)' if row else '*' }}</span>
+      <input type="password" name="password" {{ 'required minlength=6' if not row else '' }} />
+    </label>
+    <label>
+      <span>Role</span>
+      <select name="role">
+        {% for r in roles %}
+          <option value="{{ r }}" {% if row and row.role == r %}selected{% endif %}>{{ r }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    {% if row %}
+    <label>
+      <span>Active</span>
+      <select name="is_active">
+        <option value="1" {% if row.is_active %}selected{% endif %}>Yes</option>
+        <option value="0" {% if not row.is_active %}selected{% endif %}>No</option>
+      </select>
+    </label>
+    {% endif %}
+    <button type="submit" class="btn btn-primary btn-block">
+      {{ 'Save changes' if row else 'Create user' }}
+    </button>
+  </form>
+</div>
+{% endblock %}

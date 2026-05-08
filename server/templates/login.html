@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Sign in · ResourceHub{% endblock %}
+
+{% block fullpage %}
+<div class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="logo-mark large">RH</div>
+      <h1>ResourceHub</h1>
+      <p class="muted">Plan. Track. Deliver.</p>
+    </div>
+
+    {% if error %}
+      <div class="alert alert-error">
+        {% if error == "unknown_user" %}User not found.
+        {% elif error == "bad_password" %}Wrong password.
+        {% elif error == "inactive_user" %}This account is inactive.
+        {% elif error == "empty_credentials" %}Please fill in both fields.
+        {% else %}Login failed.
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <form method="post" action="/login" class="form">
+      <label>
+        <span>Username</span>
+        <input type="text" name="username" required autofocus
+               value="{{ username or '' }}" />
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" name="password" required />
+      </label>
+      <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+    </form>
+
+    <p class="muted small auth-hint">
+      Default admin: <code>admin</code> / <code>admin</code> (must change on first login).
+    </p>
+  </div>
+</div>
+{% endblock %}

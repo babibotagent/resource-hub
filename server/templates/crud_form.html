@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if pk_val else 'New' }} {{ cfg.singular }} · ResourceHub{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <h1>{{ 'Edit' if pk_val else 'New' }} {{ cfg.singular }}</h1>
+  <p class="muted"><a href="/{{ view_id }}">&larr; Back to {{ cfg.title }}</a></p>
+</header>
+
+<div class="card" style="max-width:640px;">
+  {% if error %}
+    <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <form method="post"
+        action="/{{ view_id }}/{{ pk_val }}/edit" {%- if pk_val %}
+        {% else %}
+        action="/{{ view_id }}/new"
+        {% endif %}
+        class="form">
+
+    {% for f in fields %}
+      <label>
+        <span>{{ f.label }}{% if f.get('required', False) %} *{% endif %}</span>
+
+        {% if f.type == 'textarea' %}
+          <textarea name="{{ f.key }}" rows="3"
+                    {% if f.get('required') %}required{% endif %}
+          >{{ f.value if f.value is not none else '' }}</textarea>
+
+        {% elif f.type == 'enum' %}
+          <select name="{{ f.key }}">
+            {% for opt in f.values %}
+              <option value="{{ opt }}"
+                      {% if (f.value|string) == (opt|string) %}selected{% endif %}
+              >{{ opt }}</option>
+            {% endfor %}
+          </select>
+
+        {% elif f.type == 'fk' %}
+          <select name="{{ f.key }}">
+            {% if f.get('nullable', False) or not f.get('required', False) %}
+              <option value="">– none –</option>
+            {% endif %}
+            {% for choice_id, choice_label in f.get('choices', []) %}
+              <option value="{{ choice_id }}"
+                      {% if (f.value|string) == (choice_id|string) %}selected{% endif %}
+              >{{ choice_label }}</option>
+            {% endfor %}
+          </select>
+
+        {% elif f.type == 'date' %}
+          <input type="date" name="{{ f.key }}"
+                 value="{{ f.value if f.value is not none else '' }}"
+                 {% if f.get('required') %}required{% endif %} />
+
+        {% elif f.type in ('int', 'real') %}
+          <input type="number" name="{{ f.key }}"
+                 step="{{ '1' if f.type == 'int' else 'any' }}"
+                 value="{{ f.value if f.value is not none else '' }}"
+                 {% if f.get('required') %}required{% endif %} />
+
+        {% else %}
+          <input type="text" name="{{ f.key }}"
+                 value="{{ f.value if f.value is not none else '' }}"
+                 {% if f.get('required') %}required{% endif %} />
+        {% endif %}
+      </label>
+    {% endfor %}
+
+    <div style="display:flex; gap:10px; margin-top:8px;">
+      <button type="submit" class="btn btn-primary">
+        {{ 'Save changes' if pk_val else 'Create ' + cfg.singular }}
+      </button>
+      <a href="/{{ view_id }}" class="btn" style="background:var(--border); color:var(--text);">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

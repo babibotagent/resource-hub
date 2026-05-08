@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ cfg.title }} · ResourceHub{% endblock %}
+
+{% block content %}
+<header class="page-header" style="display:flex; justify-content:space-between; align-items:center;">
+  <div>
+    <h1>{{ cfg.title }}</h1>
+    <p class="muted">{{ cfg.subtitle }}</p>
+  </div>
+  <a href="/{{ view_id }}/new" class="btn btn-primary">+ New {{ cfg.singular }}</a>
+</header>
+
+{% if rows %}
+<div class="card" style="padding:0; overflow-x:auto;">
+  <table class="table">
+    <thead>
+      <tr>
+        {% for col in columns %}
+          <th>{{ col.header }}</th>
+        {% endfor %}
+        <th style="width:120px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+        <tr>
+          {% for col in columns %}
+            <td>{{ row[col.key] if row[col.key] is not none else '–' }}</td>
+          {% endfor %}
+          <td>
+            <a href="/{{ view_id }}/{{ row[cfg.pk] }}/edit" class="btn-inline">Edit</a>
+            <form method="post" action="/{{ view_id }}/{{ row[cfg.pk] }}/delete"
+                  style="display:inline;"
+                  onsubmit="return confirm('Delete this {{ cfg.singular }}?');">
+              <button type="submit" class="btn-inline btn-inline-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="muted small" style="margin-top:8px;">{{ rows|length }} record{{ 's' if rows|length != 1 else '' }}</p>
+{% else %}
+<div class="card" style="text-align:center; padding:40px;">
+  <p class="muted">No {{ cfg.title|lower }} found.</p>
+  <a href="/{{ view_id }}/new" class="btn btn-primary" style="margin-top:12px;">Create first {{ cfg.singular }}</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,12 @@
+# Desktop (Tk) deps
+matplotlib>=3.7.0
+openpyxl>=3.1.0
+
+# Web app deps (FastAPI + HTMX)
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+jinja2>=3.1.4
+itsdangerous>=2.2.0
+python-multipart>=0.0.9
+sqlalchemy>=2.0.30
+psycopg2-binary>=2.9.9   # Postgres driver (AWS RDS); not used locally if DATABASE_URL is sqlite:///

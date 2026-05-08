@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Users · ResourceHub{% endblock %}
+
+{% block content %}
+<header class="page-header" style="display:flex; justify-content:space-between; align-items:center;">
+  <div>
+    <h1>Users</h1>
+    <p class="muted">System accounts and roles</p>
+  </div>
+  <a href="/users/new" class="btn btn-primary">+ New user</a>
+</header>
+
+<div class="card" style="padding:0; overflow-x:auto;">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th><th>Username</th><th>Role</th><th>Active</th><th>Last login</th><th>Created</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+        <tr>
+          <td>{{ r.user_id }}</td>
+          <td><strong>{{ r.username }}</strong></td>
+          <td>{{ r.role }}</td>
+          <td>{{ 'Yes' if r.is_active else 'No' }}</td>
+          <td>{{ r.last_login_at or '–' }}</td>
+          <td>{{ r.created_at or '–' }}</td>
+          <td><a href="/users/{{ r.user_id }}/edit" class="btn-inline">Edit</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
