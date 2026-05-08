@@ -21,9 +21,9 @@ def reports(request: Request):
         SELECT p.project_code, p.project_name,
                COALESCE(SUM(te.hours), 0) AS total_hours,
                COUNT(te.time_entry_id) AS entries
-        FROM Project p
-        LEFT JOIN Task t ON t.project_id = p.project_id
-        LEFT JOIN Time_Entry te ON te.task_id = t.task_id
+        FROM "Project" p
+        LEFT JOIN "Task" t ON t.project_id = p.project_id
+        LEFT JOIN "Time_Entry" te ON te.task_id = t.task_id
         GROUP BY p.project_id, p.project_code, p.project_name
         ORDER BY total_hours DESC
     """)
@@ -35,7 +35,7 @@ def reports(request: Request):
                CASE WHEN budget > 0
                     THEN ROUND(100.0 * COALESCE(actual_cost,0) / budget, 1)
                     ELSE 0 END AS pct
-        FROM Project
+        FROM "Project"
         ORDER BY pct DESC
     """)
 
@@ -44,9 +44,9 @@ def reports(request: Request):
                         x.first_name || ' ' || x.last_name, 'Unassigned') AS person,
                COALESCE(SUM(te.hours), 0) AS total_hours,
                COUNT(te.time_entry_id) AS entries
-        FROM Time_Entry te
-        LEFT JOIN Employee e ON e.employee_id = te.employee_id
-        LEFT JOIN External_Resource x ON x.external_id = te.external_id
+        FROM "Time_Entry" te
+        LEFT JOIN "Employee" e ON e.employee_id = te.employee_id
+        LEFT JOIN "External_Resource" x ON x.external_id = te.external_id
         GROUP BY person
         ORDER BY total_hours DESC
     """)
@@ -55,7 +55,7 @@ def reports(request: Request):
         SELECT status,
                COUNT(*) AS cnt,
                COALESCE(SUM(total_amount), 0) AS total
-        FROM Invoice
+        FROM "Invoice"
         GROUP BY status
         ORDER BY status
     """)

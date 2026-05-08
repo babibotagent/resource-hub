@@ -1,15 +1,10 @@
-"""Web-adapted CRUD configurations. Same structure as views/crud_configs.py
-but FK lookups use server.db instead of the legacy sqlite3 connection."""
+"""Web-adapted CRUD configurations with Postgres-safe quoted table names."""
 from __future__ import annotations
 
 from server.db import fetch_all
 
 
-# ---------------------------------------------------------------------------
-# FK lookup helpers
-# ---------------------------------------------------------------------------
 def _fk_lookup(sql: str) -> callable:
-    """Return a callable that fetches (id, label) pairs."""
     def _fn():
         rows = fetch_all(sql)
         return [(r["id"], r["lbl"]) for r in rows]
@@ -17,36 +12,33 @@ def _fk_lookup(sql: str) -> callable:
 
 
 customers_lookup = _fk_lookup(
-    "SELECT customer_id AS id, customer_name || ' (' || COALESCE(customer_code,'') || ')' AS lbl "
-    "FROM Customer ORDER BY customer_name")
+    """SELECT customer_id AS id, customer_name || ' (' || COALESCE(customer_code,'') || ')' AS lbl
+       FROM "Customer" ORDER BY customer_name""")
 
 projects_lookup = _fk_lookup(
-    "SELECT project_id AS id, COALESCE(project_code,'') || ' - ' || project_name AS lbl "
-    "FROM Project ORDER BY project_code")
+    """SELECT project_id AS id, COALESCE(project_code,'') || ' - ' || project_name AS lbl
+       FROM "Project" ORDER BY project_code""")
 
 employees_lookup = _fk_lookup(
-    "SELECT employee_id AS id, first_name || ' ' || last_name AS lbl "
-    "FROM Employee WHERE status = 'active' ORDER BY first_name")
+    """SELECT employee_id AS id, first_name || ' ' || last_name AS lbl
+       FROM "Employee" WHERE status = 'active' ORDER BY first_name""")
 
 externals_lookup = _fk_lookup(
-    "SELECT external_id AS id, first_name || ' ' || last_name || ' (' || COALESCE(company,'') || ')' AS lbl "
-    "FROM External_Resource WHERE status = 'active' ORDER BY first_name")
+    """SELECT external_id AS id, first_name || ' ' || last_name || ' (' || COALESCE(company,'') || ')' AS lbl
+       FROM "External_Resource" WHERE status = 'active' ORDER BY first_name""")
 
 departments_lookup = _fk_lookup(
-    "SELECT department_id AS id, department_name AS lbl FROM Department ORDER BY department_name")
+    """SELECT department_id AS id, department_name AS lbl FROM "Department" ORDER BY department_name""")
 
 knowledge_lookup = _fk_lookup(
-    "SELECT knowledge_id AS id, subject || ' (' || COALESCE(category,'') || ')' AS lbl "
-    "FROM Knowledge ORDER BY subject")
+    """SELECT knowledge_id AS id, subject || ' (' || COALESCE(category,'') || ')' AS lbl
+       FROM "Knowledge" ORDER BY subject""")
 
 tasks_lookup = _fk_lookup(
-    "SELECT task_id AS id, title || ' [' || COALESCE(status,'') || ']' AS lbl "
-    "FROM Task ORDER BY task_id DESC")
+    """SELECT task_id AS id, title || ' [' || COALESCE(status,'') || ']' AS lbl
+       FROM "Task" ORDER BY task_id DESC""")
 
 
-# ---------------------------------------------------------------------------
-# Enum values (must match CHECK constraints in database.py)
-# ---------------------------------------------------------------------------
 STATUS_ACTIVE   = ['active', 'inactive']
 PROJECT_STATUS  = ['planning', 'in_progress', 'on_hold', 'completed', 'cancelled']
 PRIORITY        = ['low', 'medium', 'high', 'critical']
@@ -61,13 +53,10 @@ BILLABLE        = ['yes', 'no']
 USER_ROLES      = ['admin', 'project_manager', 'member', 'viewer']
 
 
-# ---------------------------------------------------------------------------
-# Table configurations
-# ---------------------------------------------------------------------------
 CUSTOMER = {
     'table': 'Customer', 'pk': 'customer_id', 'singular': 'customer',
     'title': 'Customers', 'subtitle': 'Manage clients and accounts',
-    'list_sql': "SELECT * FROM Customer",
+    'list_sql': """SELECT * FROM "Customer" """,
     'list_order': "ORDER BY customer_name",
     'columns': [
         {'key': 'customer_id',   'header': 'ID'},
@@ -96,8 +85,8 @@ CUSTOMER = {
 EMPLOYEE = {
     'table': 'Employee', 'pk': 'employee_id', 'singular': 'employee',
     'title': 'Employees', 'subtitle': 'Internal team members',
-    'list_sql': """SELECT e.*, d.department_name FROM Employee e
-                   LEFT JOIN Department d ON d.department_id = e.department_id""",
+    'list_sql': """SELECT e.*, d.department_name FROM "Employee" e
+                   LEFT JOIN "Department" d ON d.department_id = e.department_id""",
     'list_order': "ORDER BY e.first_name, e.last_name",
     'columns': [
         {'key': 'employee_id',    'header': 'ID'},
@@ -128,7 +117,7 @@ EMPLOYEE = {
 EXTERNAL = {
     'table': 'External_Resource', 'pk': 'external_id', 'singular': 'external resource',
     'title': 'External Resources', 'subtitle': 'Freelancers, contractors, consultants',
-    'list_sql': "SELECT * FROM External_Resource",
+    'list_sql': """SELECT * FROM "External_Resource" """,
     'list_order': "ORDER BY first_name",
     'columns': [
         {'key': 'external_id',  'header': 'ID'},
@@ -160,8 +149,8 @@ DEPARTMENT = {
     'table': 'Department', 'pk': 'department_id', 'singular': 'department',
     'title': 'Departments', 'subtitle': 'Organizational units',
     'list_sql': """SELECT d.*, COALESCE(e.first_name || ' ' || e.last_name, '') AS manager_name
-                   FROM Department d
-                   LEFT JOIN Employee e ON e.employee_id = d.manager_employee_id""",
+                   FROM "Department" d
+                   LEFT JOIN "Employee" e ON e.employee_id = d.manager_employee_id""",
     'list_order': "ORDER BY d.department_name",
     'columns': [
         {'key': 'department_id',   'header': 'ID'},
@@ -182,7 +171,7 @@ DEPARTMENT = {
 KNOWLEDGE = {
     'table': 'Knowledge', 'pk': 'knowledge_id', 'singular': 'skill',
     'title': 'Skills / Knowledge', 'subtitle': 'Catalogue of competencies',
-    'list_sql': "SELECT * FROM Knowledge",
+    'list_sql': """SELECT * FROM "Knowledge" """,
     'list_order': "ORDER BY category, subject",
     'columns': [
         {'key': 'knowledge_id', 'header': 'ID'},
@@ -200,8 +189,8 @@ KNOWLEDGE = {
 PROJECT = {
     'table': 'Project', 'pk': 'project_id', 'singular': 'project',
     'title': 'Projects', 'subtitle': 'Project portfolio',
-    'list_sql': """SELECT p.*, c.customer_name FROM Project p
-                   LEFT JOIN Customer c ON c.customer_id = p.customer_id""",
+    'list_sql': """SELECT p.*, c.customer_name FROM "Project" p
+                   LEFT JOIN "Customer" c ON c.customer_id = p.customer_id""",
     'list_order': "ORDER BY p.start_date DESC, p.project_code",
     'columns': [
         {'key': 'project_id',   'header': 'ID'},
@@ -238,10 +227,10 @@ TASK = {
     'list_sql': """SELECT t.*, p.project_code, p.project_name,
                           COALESCE(e.first_name || ' ' || e.last_name,
                                    x.first_name || ' ' || x.last_name, '') AS assignee
-                   FROM Task t
-                   LEFT JOIN Project p ON p.project_id = t.project_id
-                   LEFT JOIN Employee e ON e.employee_id = t.assigned_employee_id
-                   LEFT JOIN External_Resource x ON x.external_id = t.assigned_external_id""",
+                   FROM "Task" t
+                   LEFT JOIN "Project" p ON p.project_id = t.project_id
+                   LEFT JOIN "Employee" e ON e.employee_id = t.assigned_employee_id
+                   LEFT JOIN "External_Resource" x ON x.external_id = t.assigned_external_id""",
     'list_order': "ORDER BY t.due_date, t.task_id DESC",
     'columns': [
         {'key': 'task_id',       'header': 'ID'},
@@ -277,10 +266,10 @@ ASSIGNMENT = {
                           COALESCE(e.first_name || ' ' || e.last_name,
                                    x.first_name || ' ' || x.last_name, '') AS person,
                           CASE WHEN a.employee_id IS NOT NULL THEN 'internal' ELSE 'external' END AS kind
-                   FROM Project_Assignment a
-                   LEFT JOIN Project p ON p.project_id = a.project_id
-                   LEFT JOIN Employee e ON e.employee_id = a.employee_id
-                   LEFT JOIN External_Resource x ON x.external_id = a.external_id""",
+                   FROM "Project_Assignment" a
+                   LEFT JOIN "Project" p ON p.project_id = a.project_id
+                   LEFT JOIN "Employee" e ON e.employee_id = a.employee_id
+                   LEFT JOIN "External_Resource" x ON x.external_id = a.external_id""",
     'list_order': "ORDER BY a.start_date DESC",
     'columns': [
         {'key': 'assignment_id',  'header': 'ID'},
@@ -309,11 +298,11 @@ TIME_ENTRY = {
     'list_sql': """SELECT te.*, t.title AS task_title, p.project_code,
                           COALESCE(e.first_name || ' ' || e.last_name,
                                    x.first_name || ' ' || x.last_name, '') AS person
-                   FROM Time_Entry te
-                   LEFT JOIN Task t ON t.task_id = te.task_id
-                   LEFT JOIN Project p ON p.project_id = t.project_id
-                   LEFT JOIN Employee e ON e.employee_id = te.employee_id
-                   LEFT JOIN External_Resource x ON x.external_id = te.external_id""",
+                   FROM "Time_Entry" te
+                   LEFT JOIN "Task" t ON t.task_id = te.task_id
+                   LEFT JOIN "Project" p ON p.project_id = t.project_id
+                   LEFT JOIN "Employee" e ON e.employee_id = te.employee_id
+                   LEFT JOIN "External_Resource" x ON x.external_id = te.external_id""",
     'list_order': "ORDER BY te.date DESC, te.time_entry_id DESC",
     'columns': [
         {'key': 'time_entry_id', 'header': 'ID'},
@@ -339,8 +328,8 @@ TIME_ENTRY = {
 RISK = {
     'table': 'Project_Risk', 'pk': 'risk_id', 'singular': 'risk',
     'title': 'Risks', 'subtitle': 'Project risk register',
-    'list_sql': """SELECT r.*, p.project_code, p.project_name FROM Project_Risk r
-                   LEFT JOIN Project p ON p.project_id = r.project_id""",
+    'list_sql': """SELECT r.*, p.project_code, p.project_name FROM "Project_Risk" r
+                   LEFT JOIN "Project" p ON p.project_id = r.project_id""",
     'list_order': "ORDER BY r.identified_date DESC, r.risk_id DESC",
     'columns': [
         {'key': 'risk_id',         'header': 'ID'},
@@ -365,9 +354,9 @@ RISK = {
 INVOICE = {
     'table': 'Invoice', 'pk': 'invoice_id', 'singular': 'invoice',
     'title': 'Invoices', 'subtitle': 'Billing and revenue tracking',
-    'list_sql': """SELECT i.*, p.project_code, c.customer_name FROM Invoice i
-                   LEFT JOIN Project p ON p.project_id = i.project_id
-                   LEFT JOIN Customer c ON c.customer_id = i.customer_id""",
+    'list_sql': """SELECT i.*, p.project_code, c.customer_name FROM "Invoice" i
+                   LEFT JOIN "Project" p ON p.project_id = i.project_id
+                   LEFT JOIN "Customer" c ON c.customer_id = i.customer_id""",
     'list_order': "ORDER BY i.invoice_date DESC",
     'columns': [
         {'key': 'invoice_id',     'header': 'ID'},
@@ -392,7 +381,6 @@ INVOICE = {
 }
 
 
-# Map nav view_id -> config (matches sidebar links in base.html)
 VIEW_CONFIGS: dict[str, dict] = {
     'projects':    PROJECT,
     'tasks':       TASK,
