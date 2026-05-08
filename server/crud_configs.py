@@ -76,8 +76,8 @@ CUSTOMER = {
         {'key': 'industry',      'label': 'Industry', 'type': 'text'},
         {'key': 'address',       'label': 'Address', 'type': 'text'},
         {'key': 'country',       'label': 'Country', 'type': 'text'},
-        {'key': 'payment_terms', 'label': 'Payment terms', 'type': 'enum', 'values': PAYMENT_TERMS, 'default': 'NET30'},
-        {'key': 'status',        'label': 'Status', 'type': 'enum', 'values': STATUS_ACTIVE, 'default': 'active'},
+        {'key': 'payment_terms', 'label': 'Payment terms', 'type': 'enum', 'options': PAYMENT_TERMS, 'default': 'NET30'},
+        {'key': 'status',        'label': 'Status', 'type': 'enum', 'options': STATUS_ACTIVE, 'default': 'active'},
     ],
     'auto_now': ['created_at'],
 }
@@ -109,7 +109,7 @@ EMPLOYEE = {
         {'key': 'department_id', 'label': 'Department', 'type': 'fk', 'choices_fn': departments_lookup, 'nullable': True},
         {'key': 'hourly_rate',   'label': 'Hourly rate (EUR)', 'type': 'real', 'required': True},
         {'key': 'hire_date',     'label': 'Hire date', 'type': 'date', 'required': True},
-        {'key': 'status',        'label': 'Status', 'type': 'enum', 'values': STATUS_ACTIVE, 'default': 'active'},
+        {'key': 'status',        'label': 'Status', 'type': 'enum', 'options': STATUS_ACTIVE, 'default': 'active'},
     ],
     'auto_now': ['created_at'],
 }
@@ -136,11 +136,11 @@ EXTERNAL = {
         {'key': 'email',         'label': 'Email', 'type': 'text'},
         {'key': 'phone',         'label': 'Phone', 'type': 'text'},
         {'key': 'hourly_rate',   'label': 'Hourly rate (EUR)', 'type': 'real', 'required': True},
-        {'key': 'contract_type', 'label': 'Contract type', 'type': 'enum', 'values': CONTRACT_TYPES, 'default': 'freelancer'},
+        {'key': 'contract_type', 'label': 'Contract type', 'type': 'enum', 'options': CONTRACT_TYPES, 'default': 'freelancer'},
         {'key': 'specialty',     'label': 'Specialty', 'type': 'text'},
         {'key': 'contract_start','label': 'Contract start', 'type': 'date', 'required': True},
         {'key': 'contract_end',  'label': 'Contract end', 'type': 'date'},
-        {'key': 'status',        'label': 'Status', 'type': 'enum', 'values': STATUS_ACTIVE, 'default': 'active'},
+        {'key': 'status',        'label': 'Status', 'type': 'enum', 'options': STATUS_ACTIVE, 'default': 'active'},
     ],
     'auto_now': ['created_at'],
 }
@@ -163,7 +163,7 @@ DEPARTMENT = {
         {'key': 'department_name',     'label': 'Name', 'type': 'text', 'required': True},
         {'key': 'manager_employee_id', 'label': 'Manager', 'type': 'fk', 'choices_fn': employees_lookup, 'nullable': True},
         {'key': 'cost_center',         'label': 'Cost center', 'type': 'text'},
-        {'key': 'status',              'label': 'Status', 'type': 'enum', 'values': STATUS_ACTIVE, 'default': 'active'},
+        {'key': 'status',              'label': 'Status', 'type': 'enum', 'options': STATUS_ACTIVE, 'default': 'active'},
     ],
     'auto_now': ['created_at'],
 }
@@ -181,7 +181,7 @@ KNOWLEDGE = {
     ],
     'form_fields': [
         {'key': 'subject',     'label': 'Subject', 'type': 'text', 'required': True},
-        {'key': 'category',    'label': 'Category', 'type': 'enum', 'values': KNOWLEDGE_CAT, 'default': 'Frontend'},
+        {'key': 'category',    'label': 'Category', 'type': 'enum', 'options': KNOWLEDGE_CAT, 'default': 'Frontend'},
         {'key': 'description', 'label': 'Description', 'type': 'textarea'},
     ],
 }
@@ -209,8 +209,8 @@ PROJECT = {
         {'key': 'project_code',    'label': 'Code (PRJ-XXX)', 'type': 'text'},
         {'key': 'customer_id',     'label': 'Customer', 'type': 'fk', 'choices_fn': customers_lookup, 'nullable': True},
         {'key': 'description',     'label': 'Description', 'type': 'textarea'},
-        {'key': 'status',          'label': 'Status', 'type': 'enum', 'values': PROJECT_STATUS, 'default': 'planning'},
-        {'key': 'priority',        'label': 'Priority', 'type': 'enum', 'values': PRIORITY, 'default': 'medium'},
+        {'key': 'status',          'label': 'Status', 'type': 'enum', 'options': PROJECT_STATUS, 'default': 'planning'},
+        {'key': 'priority',        'label': 'Priority', 'type': 'enum', 'options': PRIORITY, 'default': 'medium'},
         {'key': 'estimated_hours', 'label': 'Estimated hours', 'type': 'real'},
         {'key': 'actual_hours',    'label': 'Actual hours', 'type': 'real'},
         {'key': 'budget',          'label': 'Budget (EUR)', 'type': 'real'},
@@ -249,8 +249,8 @@ TASK = {
         {'key': 'description',          'label': 'Description', 'type': 'textarea'},
         {'key': 'assigned_employee_id', 'label': 'Assignee (employee)', 'type': 'fk', 'choices_fn': employees_lookup, 'nullable': True},
         {'key': 'assigned_external_id', 'label': 'Assignee (external)', 'type': 'fk', 'choices_fn': externals_lookup, 'nullable': True},
-        {'key': 'status',         'label': 'Status', 'type': 'enum', 'values': TASK_STATUS, 'default': 'todo'},
-        {'key': 'priority',       'label': 'Priority', 'type': 'enum', 'values': PRIORITY, 'default': 'medium'},
+        {'key': 'status',         'label': 'Status', 'type': 'enum', 'options': TASK_STATUS, 'default': 'todo'},
+        {'key': 'priority',       'label': 'Priority', 'type': 'enum', 'options': PRIORITY, 'default': 'medium'},
         {'key': 'estimated_hours','label': 'Estimated hours', 'type': 'real'},
         {'key': 'actual_hours',   'label': 'Actual hours', 'type': 'real'},
         {'key': 'due_date',       'label': 'Due date', 'type': 'date'},
@@ -321,7 +321,7 @@ TIME_ENTRY = {
         {'key': 'date',        'label': 'Date', 'type': 'date', 'required': True},
         {'key': 'hours',       'label': 'Hours', 'type': 'real', 'required': True},
         {'key': 'description', 'label': 'Description', 'type': 'textarea'},
-        {'key': 'billable',    'label': 'Billable', 'type': 'enum', 'values': BILLABLE, 'default': 'yes'},
+        {'key': 'billable',    'label': 'Billable', 'type': 'enum', 'options': BILLABLE, 'default': 'yes'},
     ],
 }
 
@@ -343,10 +343,10 @@ RISK = {
     'form_fields': [
         {'key': 'project_id',      'label': 'Project', 'type': 'fk', 'choices_fn': projects_lookup, 'required': True},
         {'key': 'description',     'label': 'Description', 'type': 'textarea', 'required': True},
-        {'key': 'probability',     'label': 'Probability', 'type': 'enum', 'values': PROB_IMPACT, 'default': 'medium'},
-        {'key': 'impact',          'label': 'Impact', 'type': 'enum', 'values': PROB_IMPACT, 'default': 'medium'},
+        {'key': 'probability',     'label': 'Probability', 'type': 'enum', 'options': PROB_IMPACT, 'default': 'medium'},
+        {'key': 'impact',          'label': 'Impact', 'type': 'enum', 'options': PROB_IMPACT, 'default': 'medium'},
         {'key': 'mitigation_plan', 'label': 'Mitigation plan', 'type': 'textarea'},
-        {'key': 'status',          'label': 'Status', 'type': 'enum', 'values': RISK_STATUS, 'default': 'identified'},
+        {'key': 'status',          'label': 'Status', 'type': 'enum', 'options': RISK_STATUS, 'default': 'identified'},
         {'key': 'identified_date', 'label': 'Identified date', 'type': 'date'},
     ],
 }
@@ -375,7 +375,7 @@ INVOICE = {
         {'key': 'invoice_date',   'label': 'Invoice date', 'type': 'date', 'required': True},
         {'key': 'due_date',       'label': 'Due date', 'type': 'date', 'required': True},
         {'key': 'total_amount',   'label': 'Total amount (EUR)', 'type': 'real', 'required': True},
-        {'key': 'status',         'label': 'Status', 'type': 'enum', 'values': INVOICE_STATUS, 'default': 'draft'},
+        {'key': 'status',         'label': 'Status', 'type': 'enum', 'options': INVOICE_STATUS, 'default': 'draft'},
         {'key': 'notes',          'label': 'Notes', 'type': 'textarea'},
     ],
 }

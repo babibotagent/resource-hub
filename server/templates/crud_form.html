@@ -30,7 +30,7 @@
 
         {% elif f.type == 'enum' %}
           <select name="{{ f.key }}">
-            {% for opt in f.values %}
+            {% for opt in f.options %}
               <option value="{{ opt }}"
                       {% if (f.value|string) == (opt|string) %}selected{% endif %}
               >{{ opt }}</option>
