@@ -60,7 +60,7 @@ def reports(request: Request):
         ORDER BY status
     """)
 
-    return request.app.state.templates.TemplateResponse("reports.html", {
+    return request.app.state.templates.TemplateResponse(name="reports.html", context={
         "request": request,
         "user": user,
         "active": "reports",

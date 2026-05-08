@@ -23,4 +23,4 @@ def dashboard(request: Request):
         "recent_risks": queries.recent_risks(limit=5),
         "active": "dashboard",
     }
-    return request.app.state.templates.TemplateResponse("dashboard.html", ctx)
+    return request.app.state.templates.TemplateResponse(name="dashboard.html", context=ctx)

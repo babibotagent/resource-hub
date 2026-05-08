@@ -26,7 +26,7 @@ def _qt():
 def user_list(request: Request):
     user = security.require_admin(request)
     rows = fetch_all(f"SELECT user_id, username, role, is_active, last_login_at, created_at FROM {_qt()} ORDER BY username")
-    return _tpl(request).TemplateResponse("users_list.html", {
+    return _tpl(request).TemplateResponse(name="users_list.html", context={
         "request": request, "user": user, "active": "users", "rows": rows,
     })
 
@@ -34,7 +34,7 @@ def user_list(request: Request):
 @router.get("/new", response_class=HTMLResponse)
 def user_new_form(request: Request):
     user = security.require_admin(request)
-    return _tpl(request).TemplateResponse("users_form.html", {
+    return _tpl(request).TemplateResponse(name="users_form.html", context={
         "request": request, "user": user, "active": "users",
         "roles": USER_ROLES, "row": None, "error": None,
     })
@@ -49,7 +49,7 @@ def user_new_submit(
 ):
     user = security.require_admin(request)
     if len(password) < 6:
-        return _tpl(request).TemplateResponse("users_form.html", {
+        return _tpl(request).TemplateResponse(name="users_form.html", context={
             "request": request, "user": user, "active": "users",
             "roles": USER_ROLES, "row": {"username": username, "role": role},
             "error": "Password must be at least 6 characters.",
@@ -64,7 +64,7 @@ def user_new_submit(
             {"u": username.strip(), "h": h, "s": s, "r": role,
              "now": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")})
     except Exception as exc:
-        return _tpl(request).TemplateResponse("users_form.html", {
+        return _tpl(request).TemplateResponse(name="users_form.html", context={
             "request": request, "user": user, "active": "users",
             "roles": USER_ROLES, "row": {"username": username, "role": role},
             "error": str(exc),
@@ -79,7 +79,7 @@ def user_edit_form(request: Request, uid: int):
     if row is None:
         from fastapi import HTTPException
         raise HTTPException(404, "User not found")
-    return _tpl(request).TemplateResponse("users_form.html", {
+    return _tpl(request).TemplateResponse(name="users_form.html", context={
         "request": request, "user": user, "active": "users",
         "roles": USER_ROLES, "row": row, "error": None,
     })
@@ -96,7 +96,7 @@ def user_edit_submit(
     user = security.require_admin(request)
     if password and len(password) < 6:
         row = fetch_one(f"SELECT * FROM {_qt()} WHERE user_id = :id", {"id": uid})
-        return _tpl(request).TemplateResponse("users_form.html", {
+        return _tpl(request).TemplateResponse(name="users_form.html", context={
             "request": request, "user": user, "active": "users",
             "roles": USER_ROLES, "row": row,
             "error": "Password must be at least 6 characters.",
