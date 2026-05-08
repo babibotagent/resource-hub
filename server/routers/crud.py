@@ -220,7 +220,21 @@ def crud_delete(request: Request, view_id: str, pk_val: int):
     security.require_user(request)
     cfg = _cfg(view_id)
     table = _quote_table(cfg['table'])
-    execute(f"DELETE FROM {table} WHERE {cfg['pk']} = :pk", {"pk": pk_val})
+    try:
+        execute(f"DELETE FROM {table} WHERE {cfg['pk']} = :pk", {"pk": pk_val})
+    except Exception as exc:
+        # FK constraint or other DB error — show list with error message
+        rows = fetch_all(cfg['list_sql'] + " " + cfg.get('list_order', ''))
+        return _tpl(request).TemplateResponse(request, name="crud_list.html", context={
+            "request": request,
+            "user": security.current_user(request),
+            "active": view_id,
+            "cfg": cfg,
+            "view_id": view_id,
+            "rows": rows,
+            "columns": cfg['columns'],
+            "error": f"Cannot delete: this record is referenced by other data. ({exc.__class__.__name__})",
+        }, status_code=400)
     return RedirectResponse(url=f"/{view_id}", status_code=303)
 
 
