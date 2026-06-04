@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Sign in · ResourceHub{% endblock %}
+{% block title %}Welcome · ResourceHub{% endblock %}
 
 {% block fullpage %}
 <div class="auth-shell">
@@ -11,32 +11,23 @@
     </div>
 
     {% if error %}
-      <div class="alert alert-error">
-        {% if error == "unknown_user" %}User not found.
-        {% elif error == "bad_password" %}Wrong password.
-        {% elif error == "inactive_user" %}This account is inactive.
-        {% elif error == "empty_credentials" %}Please fill in both fields.
-        {% else %}Login failed.
-        {% endif %}
-      </div>
+      <div class="alert alert-error">{{ error }}</div>
     {% endif %}
 
-    <form method="post" action="/login" class="form">
-      <label>
-        <span>Username</span>
-        <input type="text" name="username" required autofocus
-               value="{{ username or '' }}" />
-      </label>
-      <label>
-        <span>Password</span>
-        <input type="password" name="password" required />
-      </label>
-      <button type="submit" class="btn btn-primary btn-block">Sign in</button>
-    </form>
+    <p style="text-align:center; margin-bottom:1.2em;">Select your role to continue:</p>
 
-    <p class="muted small auth-hint">
-      Default admin: <code>admin</code> / <code>admin</code> (must change on first login).
-    </p>
+    <form method="post" action="/login" class="form">
+      <div style="display:flex; flex-direction:column; gap:.75em;">
+        {% for role in roles %}
+        <button type="submit" name="role" value="{{ role.value }}"
+                class="btn btn-primary btn-block"
+                style="text-align:left; padding:.8em 1.2em;">
+          <strong>{{ role.label }}</strong>
+          <br><small class="muted">{{ role.description }}</small>
+        </button>
+        {% endfor %}
+      </div>
+    </form>
   </div>
 </div>
 {% endblock %}

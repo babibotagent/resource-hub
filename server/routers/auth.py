@@ -15,37 +15,42 @@ def _templates(request: Request):
     return request.app.state.templates
 
 
+GUEST_ROLES = [
+    {"value": "admin",           "label": "Admin",           "description": "Full access to all features and settings"},
+    {"value": "project_manager", "label": "Project Manager", "description": "Manage projects, resources, and reports"},
+    {"value": "member",          "label": "Team Member",     "description": "View and update assigned work"},
+    {"value": "viewer",          "label": "Viewer",          "description": "Read-only access to dashboards and reports"},
+]
+
+_VALID_ROLES = {r["value"] for r in GUEST_ROLES}
+
+
 @router.get("/login", response_class=HTMLResponse)
 def login_form(request: Request):
     if security.current_user(request) is not None:
         return RedirectResponse(url="/dashboard", status_code=303)
     return _templates(request).TemplateResponse(
-        "login.html", {"request": request, "error": None})
+        "login.html", {"request": request, "error": None, "roles": GUEST_ROLES})
 
 
 @router.post("/login", response_class=HTMLResponse)
 def login_submit(
     request: Request,
-    username: str = Form(...),
-    password: str = Form(...),
+    role: str = Form(...),
 ):
-    try:
-        user = security.authenticate(username, password)
-    except security.LoginError as exc:
+    if role not in _VALID_ROLES:
         return _templates(request).TemplateResponse(
             "login.html",
-            {"request": request, "error": exc.code, "username": username},
-            status_code=401,
+            {"request": request, "error": "Invalid role selected.", "roles": GUEST_ROLES},
+            status_code=400,
         )
     request.session["user"] = {
-        "user_id": user["user_id"],
-        "username": user["username"],
-        "role": user["role"],
-        "employee_id": user.get("employee_id"),
-        "must_change_password": user.get("must_change_password", 0),
+        "user_id": 0,
+        "username": f"guest_{role}",
+        "role": role,
+        "employee_id": None,
+        "must_change_password": 0,
     }
-    if user.get("must_change_password"):
-        return RedirectResponse(url="/change-password", status_code=303)
     return RedirectResponse(url="/dashboard", status_code=303)
 
 
